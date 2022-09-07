@@ -1,9 +1,20 @@
 pipeline {
-    agent ("Slave")
+    agent {
+  label 'Slave'
+
+    }
     stages {
         stage('CloneRepo'){
             steps {
-                echo 'Hello'
+                git branch: 'main', credentialsId: '727e9453-c817-4d81-b19c-b239af283621', url: 'git@github.com:souzare/jenkins_pipeline.git'
+                mkdir /home/ec2-user/html_storage
+                cp index.html /home/ec2-user/html_storage
+                }
+        }
+        stage('DeployApache'){
+            steps {
+            cp /home/ec2-user/html_storage/index.html /var/www/html
+            sudo systemctl restart httpd
             }
         }
     }
