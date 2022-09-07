@@ -18,5 +18,11 @@ pipeline {
             sudo systemctl restart httpd'''
             }
         }
+        stage('ExibeLinkDoSite'){
+            steps {
+            sh '''IP=$(curl ifconfig.me)
+            echo Esse é o link do site $IP'''
+            }
+        }
     }
 }
