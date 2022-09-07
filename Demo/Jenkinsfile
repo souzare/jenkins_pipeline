@@ -1,0 +1,10 @@
+pipeline {
+    agent Slave
+    stages {
+        stage('CloneRepo'){
+            steps {
+                echo 'Hello'
+            }
+        }
+    }
+}
