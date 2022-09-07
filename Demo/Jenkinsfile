@@ -1,5 +1,5 @@
 pipeline {
-    node("Slave")
+    agent ("Slave")
     stages {
         stage('CloneRepo'){
             steps {
