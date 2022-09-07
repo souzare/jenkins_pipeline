@@ -6,15 +6,16 @@ pipeline {
     stages {
         stage('CloneRepo'){
             steps {
-                git branch: 'main', credentialsId: '727e9453-c817-4d81-b19c-b239af283621', url: 'git@github.com:souzare/jenkins_pipeline.git'
-                mkdir /home/ec2-user/html_storage
-                cp index.html /home/ec2-user/html_storage
+                git branch: 'main', credentialsId: '727e9453-c817-4d81-b19c-b239af283621', url: 'git@github.com:souzare/HTML.git'
+                sh '''
+                if [ ! -d /home/ec2-user/html_storage ]; then mkdir /home/ec2-user/html_storage; fi
+                cp index.html /home/ec2-user/html_storage'''
                 }
         }
         stage('DeployApache'){
             steps {
-            cp /home/ec2-user/html_storage/index.html /var/www/html
-            sudo systemctl restart httpd
+            sh '''cp /home/ec2-user/html_storage/index.html /var/www/html
+            sudo systemctl restart httpd'''
             }
         }
     }
