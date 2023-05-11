@@ -3,6 +3,9 @@ pipeline {
   label 'Slave'
 
     }
+    triggers {
+        cron('* * * * *')
+    }
     stages {
         stage('CloneRepo'){
             steps {
