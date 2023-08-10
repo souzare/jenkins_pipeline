@@ -1,31 +1,64 @@
 pipeline {
     agent {
-  label 'Slave'
-
-    }
-    triggers {
-        cron('* * * * *')
-    }
-    stages {
-        stage('CloneRepo'){
+                label 'Agent1'
+            }
+            tools {
+        maven "maven"
+            }
+     stages {
+         stage('SCM') {
             steps {
-                git branch: 'main', credentialsId: '68d805e9-0de7-4936-9b22-ad5b45a8bb70', url: 'git@github.com:souzare/HTML.git'
-                sh '''
-                if [ ! -d /home/ec2-user/html_storage ]; then mkdir /home/ec2-user/html_storage; fi
-                cp index.html /home/ec2-user/html_storage'''
+                git branch: 'master',
+                credentialsId: 'git',
+                url: 'git@github.com:souzare/simple-java-maven-app.git'
+            }
+        }
+        stage('Build') {
+            steps {
+                sh 'mvn -B -DskipTests clean package'
+            }
+        }
+        stage('SonarQube analysis') {
+            steps {
+                script {
+                def scannerHome = tool 'Sonarscanner';
+                    withSonarQubeEnv('Sonar') { // If you have configured more than one global server connection, you can specify its name
+                    sh "${scannerHome}/bin/sonar-scanner -Dsonar.projectKey=java2 -Dsonar.projectName=Java2 -Dsonar.projectVersion=1.0 -Dsonar.host.url=http://44.193.212.98:9000 -Dsonar.sources=src/main/java/com/mycompany/app/ -Dsonar.analysis.mode="
+                    }
+            }
+            }
+        }
+        stage('Test') {
+            steps {
+                sh 'mvn test'
+            }
+            post {
+                always {
+                    junit 'target/surefire-reports/*.xml'
                 }
-        }
-        stage('DeployApache'){
-            steps {
-            sh '''cp /home/ec2-user/html_storage/index.html /var/www/html
-            sudo systemctl restart httpd'''
             }
         }
-        stage('ExibeLinkDoSite'){
+        stage('Deliver') {
             steps {
-            sh '''IP=$(curl ifconfig.me)
-            echo Esse é o link do site $IP'''
+                sh './jenkins/scripts/deliver.sh'
+            }
+            post {
+                // If Maven was able to run the tests, even if some of the test
+                // failed, record the test results and archive the jar file.
+                success {
+                    archiveArtifacts 'target/*.jar'
+                }
             }
         }
-    }
+        stage("Quality Gate") {
+            steps {
+                timeout(time: 5, unit: 'MINUTES') {
+                    // Parameter indicates whether to set pipeline to UNSTABLE if Quality Gate fails
+                    // true = set pipeline to UNSTABLE, false = don't
+                    waitForQualityGate abortPipeline: true
+                }
+            }
+        }
+     }
 }
+        
