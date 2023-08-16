@@ -9,7 +9,7 @@ pipeline {
          stage('SCM') {
             steps {
                 git branch: 'master',
-                credentialsId: 'git',
+                credentialsId: 'souzare',
                 url: 'git@github.com:souzare/simple-java-maven-app.git'
             }
         }
@@ -23,7 +23,7 @@ pipeline {
                 script {
                 def scannerHome = tool 'Sonarscanner';
                     withSonarQubeEnv('Sonar') { // If you have configured more than one global server connection, you can specify its name
-                    sh "${scannerHome}/bin/sonar-scanner -Dsonar.projectKey=java2 -Dsonar.projectName=Java2 -Dsonar.projectVersion=1.0 -Dsonar.host.url=http://44.193.212.98:9000 -Dsonar.sources=src/main/java/com/mycompany/app/ -Dsonar.analysis.mode="
+                    sh "${scannerHome}/bin/sonar-scanner -Dsonar.projectKey=java2 -Dsonar.projectName=Java2 -Dsonar.projectVersion=1.0 -Dsonar.host.url=http://3.226.240.140:9000/ -Dsonar.sources=src/main/java/com/mycompany/app/ -Dsonar.analysis.mode="
                     }
             }
             }
