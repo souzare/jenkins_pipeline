@@ -8,8 +8,8 @@ pipeline {
      stages {
          stage('SCM') {
             steps {
-                git branch: 'master',
-                credentialsId: 'souzare',
+                git branch: 'main',
+                credentialsId: 'git',
                 url: 'git@github.com:souzare/simple-java-maven-app.git'
             }
         }
