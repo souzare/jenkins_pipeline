@@ -11,6 +11,7 @@ pipeline {
                 git branch: 'main',
                 credentialsId: 'git',
                 url: 'git@github.com:souzare/simple-java-maven-app.git'
+                sh 'ls -lah'
             }
         }
         stage('Build') {
